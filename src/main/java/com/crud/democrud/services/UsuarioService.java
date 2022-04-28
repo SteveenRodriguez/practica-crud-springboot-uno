@@ -4,41 +4,82 @@ import com.crud.democrud.models.UsuarioModel;
 import com.crud.democrud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
-    
-    public ArrayList<UsuarioModel> obtenerUsuarios(){
+
+    /**
+     * Get all usuario
+     * @return List of usuario
+     */
+    @Transactional(readOnly = true)
+    public List<UsuarioModel> obtenerUsuarios() {
         return (ArrayList<UsuarioModel>) usuarioRepository.findAll();
     }
 
-    public UsuarioModel guardarUsuario(UsuarioModel usuario){
+    /**
+     * Save an usuario
+     * @param usuario Object
+     * @return Usuario
+     */
+    @Transactional
+    public UsuarioModel guardarUsuario(UsuarioModel usuario) {
         return usuarioRepository.save(usuario);
     }
 
-    public Optional<UsuarioModel> obtenerPorId(Long id){
+    /**
+     * Gets an usuario by id
+     * @param id Long
+     * @return Usuario
+     */
+    @Transactional(readOnly = true)
+    public Optional<UsuarioModel> obtenerPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
+    /**
+     * Updates an usuario
+     * @param id Long
+     * @param usuario Object
+     * @return Usuario
+     */
+    @Transactional
+    public UsuarioModel actualizarUsuario(Long id, UsuarioModel usuario) {
+        usuario.setId(id);
+        return usuarioRepository.save(usuario);
+    }
 
-    public ArrayList<UsuarioModel>  obtenerPorPrioridad(Integer prioridad) {
+    /**
+     * Gets an usuario by priority
+     * @param prioridad Integer
+     * @return Usuario
+     */
+    @Transactional(readOnly = true)
+    public List<UsuarioModel> obtenerPorPrioridad(Integer prioridad) {
         return usuarioRepository.findByPrioridad(prioridad);
     }
 
+    /**
+     * Deletes an usuario
+     * @param id Long
+     * @return Boolean
+     */
+    @Transactional
     public boolean eliminarUsuario(Long id) {
-        try{
+        try {
             usuarioRepository.deleteById(id);
             return true;
-        }catch(Exception err){
+        } catch (Exception err) {
             return false;
         }
     }
-
 
     
 }

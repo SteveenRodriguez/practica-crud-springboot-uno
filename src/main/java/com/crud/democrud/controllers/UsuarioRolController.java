@@ -1,38 +1,44 @@
 package com.crud.democrud.controllers;
 
-import com.crud.democrud.models.UsuarioModel;
-import com.crud.democrud.services.UsuarioService;
+import com.crud.democrud.models.UsuarioRol;
+import com.crud.democrud.services.UsuarioRolService;
 import com.crud.democrud.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/usuario")
-public class UsuarioController {
+@RequestMapping("/usuario/rol")
+public final class UsuarioRolController {
     @Autowired
-    UsuarioService usuarioService;
+    UsuarioRolService usuarioRolService;
 
     private final Response response = new Response();
     private HttpStatus httpStatus = HttpStatus.OK;
 
-
     /**
-     * Route get all usuario
-     * @return List of usuario
+     * Route get all usuarioRol
+     * @return List of usuarioRol
      */
     @GetMapping()
-    public ResponseEntity<Response> obtenerUsuarios() {
+    public ResponseEntity<Response> getAllUserRols() {
         response.restart();
         try {
-            response.data = usuarioService.obtenerUsuarios();
+            response.data = usuarioRolService.getUserRols();
             httpStatus = HttpStatus.OK;
         } catch (Exception exception) {
             getErrorMessageInternal(exception);
@@ -41,15 +47,15 @@ public class UsuarioController {
     }
 
     /**
-     * Route Find one usuario
+     * Route Find one usuarioRol
      * @param id Long
      * @return Entity
      */
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Response> obtenerUsuarioPorId(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<Response> getUserRolById(@PathVariable(value = "id") Long id) {
         response.restart();
         try {
-            response.data = usuarioService.obtenerPorId(id);
+            response.data = usuarioRolService.findById(id);
             httpStatus = HttpStatus.OK;
         } catch (Exception exception) {
             getErrorMessageInternal(exception);
@@ -58,15 +64,32 @@ public class UsuarioController {
     }
 
     /**
-     * Route to create a usuario
-     * @param usuario Object
+     * Route Find usuarioRol by rol
+     * @param rol String
+     * @return Entity
+     */
+    @GetMapping("/query")
+    public ResponseEntity<Response> getUserRolByRol(@RequestParam(value = "rol") String rol) {
+        response.restart();
+        try {
+            response.data = usuarioRolService.findByRol(rol);
+            httpStatus = HttpStatus.OK;
+        } catch (Exception exception) {
+            getErrorMessageInternal(exception);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    /**
+     * Route to create a usuarioRol
+     * @param usuarioRol Object
      * @return Entity
      */
     @PostMapping()
-    public ResponseEntity<Response> guardarUsuario(@RequestBody UsuarioModel usuario) {
+    public ResponseEntity<Response> saveUserRol(@RequestBody UsuarioRol usuarioRol) {
         response.restart();
         try {
-            response.data = usuarioService.guardarUsuario(usuario);
+            response.data = usuarioRolService.saveUserRol(usuarioRol);
             httpStatus = HttpStatus.CREATED;
         } catch (DataAccessException exception) {
             getErrorMessageForResponse(exception);
@@ -77,17 +100,17 @@ public class UsuarioController {
     }
 
     /**
-     * Route to update a usuario
-     * @param usuario Object
+     * Route to update a usuarioRol
+     * @param usuarioRol Object
      * @param id Long
      * @return Entity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Response> actualizarUsuario(@RequestBody UsuarioModel usuario, @PathVariable(value = "id") Long id) {
+    public ResponseEntity<Response> updateUserRol(@RequestBody UsuarioRol usuarioRol, @PathVariable(value = "id") Long id) {
 
         response.restart();
         try {
-            response.data = usuarioService.actualizarUsuario(id, usuario);
+            response.data = usuarioRolService.updateUserRol(id, usuarioRol);
             httpStatus = HttpStatus.OK;
         } catch (DataAccessException exception) {
             getErrorMessageForResponse(exception);
@@ -97,35 +120,16 @@ public class UsuarioController {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-
-
     /**
-     * Route Find usuarios by priority
-     * @param prioridad Integer
-     * @return Entity
-     */
-    @GetMapping("/query")
-    public ResponseEntity<Response> obtenerUsuarioPorPrioridad(@RequestParam(value = "prioridad") Integer prioridad) {
-        response.restart();
-        try {
-            response.data = usuarioService.obtenerPorPrioridad(prioridad);
-            httpStatus = HttpStatus.OK;
-        } catch (Exception exception) {
-            getErrorMessageInternal(exception);
-        }
-        return new ResponseEntity<>(response, httpStatus);
-    }
-
-    /**
-     * Route to delete a usuario
+     * Route to delete a usuarioRol
      * @param id Long
      * @return Entity
      */
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Response> eliminarPorId(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<Response> deleteUserRol(@PathVariable(value = "id") Long id) {
         response.restart();
         try {
-            response.data = usuarioService.eliminarUsuario(id);
+            response.data = usuarioRolService.deleteUserRol(id);
             if (response.data == null) {
                 response.message = "El contacto no existe";
                 httpStatus = HttpStatus.NOT_FOUND;
@@ -189,3 +193,6 @@ public class UsuarioController {
     }
 
 }
+
+
+
